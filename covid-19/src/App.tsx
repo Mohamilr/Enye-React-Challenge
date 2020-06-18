@@ -1,15 +1,14 @@
 import React from 'react';
-// import logo from './logo.svg';
-import Map from './components/map';
-import './App.css';
+import Routes from './utils/route';
 import MyErrorBoundary from './components/errorBoundary';
+import { AppContext } from './utils/useContext';
 function App() {
   return (
-    <div className="App">
+    <AppContext>
       <MyErrorBoundary>
-      <Map />
+      <Routes />
       </MyErrorBoundary>
-    </div>
+      </AppContext>
   );
 }
 
