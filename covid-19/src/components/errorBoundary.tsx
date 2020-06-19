@@ -17,7 +17,7 @@ export default class MyErrorBoundary extends Component {
 
     render() {
         if(this.state.hasError) {
-            return <h1 style={{marginTop: '3em'}}>Exceeded Search limit</h1>
+            return <h1 style={{marginTop: '3em', textAlign: 'center', color: 'red'}}>Something went wrong. Please reload the page</h1>
         }
         return this.props.children;
     }
