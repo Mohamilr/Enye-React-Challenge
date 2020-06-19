@@ -3,18 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-
-const useStyle = makeStyles(() => ({
-    parentDiv: {
-        margin: '0 auto',
-        textAlign: 'center',
-        width: '30em'
-    },
-    historyDiv: {
-      maxHeight: '100vh',
-      overflowY: 'scroll'
-    }
-}))
+import useStyle from '../styles/mapStyle';
 
 interface Prop {
     searchHistory: string[],
@@ -28,13 +17,16 @@ const SearchHistory: FC<Prop> = ({ searchHistory, setSearchKey, handleSearch }) 
         <div className={classes.parentDiv}>
           <h3>Search History</h3>
             <List className={classes.historyDiv} component="nav" aria-label="Search History">
-              {searchHistory.map((searchString, index) => (
+              {searchHistory.map((data: any, index) => (
                 <ListItem key={index} button divider>
         <ListItemText onClick={(e: any) => { 
           setSearchKey(e.target.textContent);
+          
           handleSearch();
           }}>
-            {searchString}
+            {data.searchString}
+
+            {/* {`${data.searchString} in ${data.location}`} */}
             </ListItemText>
       </ListItem>
               ))}
