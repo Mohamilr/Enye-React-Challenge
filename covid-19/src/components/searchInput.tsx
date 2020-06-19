@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { useState, FC } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -17,11 +17,15 @@ interface Prop {
         handleSearch: () => Promise<void>,
         setLocation: (value: string) => void
     }
-
 }
 
 const SearchInput: FC<Prop> = ({ propObject }) => {
     const classes = useStyles();
+    const [validateKey, setValidateKey] = useState<boolean>(false);
+    const [validateLocation, setValidateLocation] = useState<boolean>(false);
+    const [validateError, setValidateError] = useState<boolean>(false);
+    
+
     return (
         <div className={classes.parentDiv}>
             <Paper component="form" className={classes.root}>
@@ -32,6 +36,9 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
                     value={propObject.searchKey}
                     required
                     onChange={e => {
+                        if(e.target.value !== '' ) {
+                            setValidateKey(true)
+                        }
                         propObject.setSearchKey(e.target.value)
                     }}
                     inputProps={{ 'aria-label': 'search google maps' }}
@@ -42,6 +49,9 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
                     placeholder="Location"
                     required
                     onChange={e => {
+                        if(e.target.value !== '' ) {
+                            setValidateLocation(true)
+                        }
                         propObject.setLocation(e.target.value)
                     }}
                     inputProps={{ 'aria-label': 'search google maps' }}
@@ -49,14 +59,24 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
                 <Tooltip title="Search">
                     <IconButton type="submit" className={classes.iconButton} aria-label="search" onClick={e => {
                         e.preventDefault();
-                        propObject.handleLocation();
-                        propObject.handleSearch();
-                        propObject.handleSubmit(e);
+                        if(validateKey && validateLocation) {
+                            propObject.handleLocation();
+                            propObject.handleSearch();
+                            propObject.handleSubmit(e);
+                            setValidateError(false);
+                        }
+                        else {
+                            setValidateError(true);
+                        }
                     }}>
                         <SearchIcon />
                     </IconButton>
                 </Tooltip>
             </Paper>
+            <div>
+                {validateError ? <p style={{color: 'red'}}>Enter search key and location</p> : ''}
+                
+            </div>
         </div>
     );
 }

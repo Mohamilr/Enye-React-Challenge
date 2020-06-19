@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FC, useContext } from 'react';
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Map, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
+import { nanoid } from 'nanoid';
 import { firestore } from '../auth/firebase.config';
 import SearchHistory from './searchHistory';
 import { AuthProvider } from '../utils/useContext';
@@ -23,13 +24,18 @@ const AutorizedMap: FC = () => {
     const [searchHistory, setSearchHistory] = useState<string[]>([]);
     const [searchKeyresults, setSearchKeyResults] = useState<any[]>([]);
     const [results, setResults] = useState<any[]>([]);
-    const { userId } = useContext(AuthProvider);
+    // const [userId, setUserId] = useState<string | null>('');
+    const userId = localStorage.getItem('userId');
 
     useEffect(() => {
         // the search key eg hospital
         handlePlace();
         HandleGetSearchHistory();
-    }, [])
+        // setUserId(userId)
+        if (!userId) {
+            localStorage.setItem('userId', nanoid(10));
+        }
+    }, [results])
 
     const handleSubmit = (e: any) => {
         e.preventDefault()
@@ -37,16 +43,16 @@ const AutorizedMap: FC = () => {
         db.collection('searchHistory').add({
             searchString: searchKey,
             userId: userId,
-            location: location 
+            location: location
         });
     }
 
     const HandleGetSearchHistory = async () => {
         const db = firestore;
-         await db.collection('searchHistory').get().then(snapshot => {
+        await db.collection('searchHistory').get().then(snapshot => {
             const strings: any = [];
             snapshot.docs.map(data => {
-                if(data.data().userId === userId) {
+                if (data.data().userId === userId) {
                     const values: any = data.data()
                     strings.push({
                         searchString: values.searchString,
@@ -56,8 +62,8 @@ const AutorizedMap: FC = () => {
             })
             setSearchHistory(strings)
         })
-        .catch(e => console.error(e))
-        
+            .catch(e => console.error(e))
+
     }
 
     const handlePlace = async () => {
@@ -70,15 +76,15 @@ const AutorizedMap: FC = () => {
             return console.log('not found')
         }
         const keys: any[] = [];
-        data.poiCategories.map((category :any) => {
-            if(category.name === 'Hospital' && category.id === 7321) {
+        data.poiCategories.map((category: any) => {
+            if (category.name === 'Hospital' && category.id === 7321) {
                 keys.push({
                     id: category.id,
                     name: category.name
                 })
             }
 
-            if(category.name === 'Pharmacy' && category.id === 7326) {
+            if (category.name === 'Pharmacy' && category.id === 7326) {
                 keys.push({
                     id: category.id,
                     name: category.name
@@ -87,10 +93,6 @@ const AutorizedMap: FC = () => {
         })
 
         setSearchKeyResults(keys)
-
-        console.log('place', keys)
-
-        // setLocation(data.name)
     }
 
     const handleLocation = async () => {
@@ -118,7 +120,7 @@ const AutorizedMap: FC = () => {
             // string code. api search by string code eg pharmacy = 7326
             let code: number = 0
             searchKeyresults.map((key: any) => {
-                if(key.name === searchKeyCap) {
+                if (key.name === searchKeyCap) {
                     code = key.id
                     console.log(key.name)
                 }
@@ -132,7 +134,7 @@ const AutorizedMap: FC = () => {
                 method: 'GET',
             })
             const data = await response.json();
-            console.log('results', data)
+            // console.log('results', data)
             if (!data.results) {
                 return console.log('not found')
             }
@@ -146,7 +148,7 @@ const AutorizedMap: FC = () => {
             })
             setResults(pos)
 
-            console.log('poss', pos)
+            // console.log('poss', pos)
         }
         catch (e) {
             console.error(e)
@@ -163,15 +165,15 @@ const AutorizedMap: FC = () => {
         handleSearch,
         setLocation
     }
-   
+
     return (
         <div className={classes.container}>
             <div className={classes.right}>
-                    <SearchInput propObject={searchInputPropObject} />
-                <SearchHistory searchHistory={searchHistory} setSearchKey={setSearchKey} handleSearch={handleSearch}/>
+                <SearchInput propObject={searchInputPropObject} />
+                <SearchHistory searchHistory={searchHistory} setSearchKey={setSearchKey} handleSearch={handleSearch} />
             </div>
             <div >
-                <Map  center={[lat, lng]} className={classes.mapLayout} zoom={13}>
+                <Map center={[lat, lng]} className={classes.mapLayout} zoom={13}>
                     <TileLayer
                         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
