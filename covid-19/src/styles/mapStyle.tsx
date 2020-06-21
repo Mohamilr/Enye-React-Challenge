@@ -23,8 +23,8 @@ const useStyles = makeStyles((theme: Theme) =>
             width: 450,
             // marginTop: '3em',
             [theme.breakpoints.down('md')]: {
-            width: 450,
-            // marginRight: '4em'
+                width: 450,
+                // marginRight: '4em'
             }
         },
         input: {
@@ -33,11 +33,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         inputDiv: {
             margin: '0 2em',
-            // [theme.breakpoints.down('md')]: {
-            //     margin: '0 2em',
-            // textAlign: 'center',
-            // width: '30em'
-            // }
         },
         iconButton: {
             padding: 10,
@@ -53,19 +48,27 @@ const useStyles = makeStyles((theme: Theme) =>
             width: '30em'
         },
         historyDiv: {
-          maxHeight: '10em',
-          overflowY: 'scroll'
+            maxHeight: '10em',
+            overflowY: 'scroll'
         },
         mapLayout: {
             height: '100vh',
-             width: '100%',
-             [theme.breakpoints.down('md')]: {
-            width: '100%'
+            width: '100%',
+            [theme.breakpoints.down('md')]: {
+                width: '100%'
             },
             [theme.breakpoints.down('sm')]: {
                 width: '40em'
             },
-
+        },
+        virusText: {
+            textAlign: 'center',
+            margin: '10em 1em',
+            color: '#575a89',
+            fontFamily: 'san-serif',
+            [theme.breakpoints.down('md')]: {
+                margin: '2em 0',
+            }
         }
     }),
 );

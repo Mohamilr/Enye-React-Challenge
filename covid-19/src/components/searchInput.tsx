@@ -7,7 +7,7 @@ import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
 import useStyles from '../styles/mapStyle';
 
-
+//  Search input props
 interface Prop {
     propObject: {
         setSearchKey: (value: string) => void,
@@ -24,23 +24,45 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
     const [validateKey, setValidateKey] = useState<boolean>(false);
     const [validateLocation, setValidateLocation] = useState<boolean>(false);
     const [validateError, setValidateError] = useState<boolean>(false);
-    
+
+    // hospital or pharmacy onchange action
+    const handleSearchKeyAction = (e: any) => {
+        if (e.target.value !== '') {
+            setValidateKey(true)
+        }
+        propObject.setSearchKey(e.target.value)
+    }
+
+    // Location onchange action
+    const handleLocationAction = (e: any) => {
+        if (e.target.value !== '') {
+            setValidateLocation(true)
+        }
+        propObject.setLocation(e.target.value);
+    }
+
+    const handleSearchAction = (e: any) => {
+        e.preventDefault();
+        if (validateKey && validateLocation) {
+            propObject.handleLocation();
+            propObject.handleSearch();
+            propObject.handleSubmit(e);
+            setValidateError(false);
+        }
+        else {
+            setValidateError(true);
+        }
+    }
 
     return (
         <div className={classes.parentDiv}>
             <Paper component="form" className={classes.root}>
-
                 <InputBase
                     className={classes.input}
                     placeholder="Hospital, Pharmacy"
                     value={propObject.searchKey}
                     required
-                    onChange={e => {
-                        if(e.target.value !== '' ) {
-                            setValidateKey(true)
-                        }
-                        propObject.setSearchKey(e.target.value)
-                    }}
+                    onChange={e => handleSearchKeyAction(e)}
                     inputProps={{ 'aria-label': 'search google maps' }}
                 />
                 <Divider orientation="vertical" flexItem />
@@ -48,34 +70,18 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
                     className={classes.input}
                     placeholder="Location"
                     required
-                    onChange={e => {
-                        if(e.target.value !== '' ) {
-                            setValidateLocation(true)
-                        }
-                        propObject.setLocation(e.target.value)
-                    }}
+                    onChange={e => handleLocationAction(e)}
                     inputProps={{ 'aria-label': 'search google maps' }}
                 />
                 <Tooltip title="Search">
-                    <IconButton type="submit" className={classes.iconButton} aria-label="search" onClick={e => {
-                        e.preventDefault();
-                        if(validateKey && validateLocation) {
-                            propObject.handleLocation();
-                            propObject.handleSearch();
-                            propObject.handleSubmit(e);
-                            setValidateError(false);
-                        }
-                        else {
-                            setValidateError(true);
-                        }
-                    }}>
+                    <IconButton type="submit" className={classes.iconButton} aria-label="search" onClick={e => handleSearchAction(e)}>
                         <SearchIcon />
                     </IconButton>
                 </Tooltip>
             </Paper>
+            {/* validation prompt */}
             <div>
-                {validateError ? <p style={{color: 'red'}}>Enter search key and location</p> : ''}
-                
+                {validateError ? <p style={{ color: 'red' }}>Enter search key and location</p> : ''}
             </div>
         </div>
     );
