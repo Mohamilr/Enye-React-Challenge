@@ -1,7 +1,7 @@
 import ApplloClient from 'apollo-boost';
 
 const client = new ApplloClient({
-    uri: 'https://covid-19-graphiql.herokuapp.com'
+    uri: process.env.REACT_APP_GRAPHQL_URL
 });
 
 export default client;
