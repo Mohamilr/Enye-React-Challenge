@@ -12,8 +12,8 @@ const Routes = () => {
             <Router>
                 <Switch>
                     <Route exact path='/' component={LandingPage} />
-                    <PrivateRoute exact path='/authorized' component={Map} />
-                    <Route exact path='*' component={NotFound} />
+                    <PrivateRoute path='/authorized' component={Map} />
+                    <Route path='*' component={NotFound} />
                 </Switch>
             </Router>
         </Suspense>

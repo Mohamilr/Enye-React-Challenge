@@ -8,7 +8,8 @@ import { AuthProvider } from '../../utils/useContext';
 // prop
 interface Prop {
     setSearchKey: (value: string) => void,
-    handleSearch: () => Promise<void>
+    handleSearch: (searchKey: string, radius: number) => Promise<void>,
+    handleLocation: (location: string) => Promise<void>,
 }
 
 // interface history {
@@ -29,23 +30,26 @@ const historyQuery = gql`
 query ($userID: String) {
     result(userId: $userID) {
         userId
-       searchString
+        searchString
         location
+        radius
     }
 }
 `;
 
-const QueryHistory: FC<Prop> = ({ setSearchKey, handleSearch }) => {
+const QueryHistory: FC<Prop> = ({ setSearchKey, handleSearch, handleLocation }) => {
     const [searchHistory, setSearchHistory] = useState<any[]>([]);
     const { userId } = useContext(AuthProvider);
 
-    const { loading, data } = useQuery(
+    const { loading, error, data } = useQuery(
         historyQuery,
         { variables: { userID: userId } }
     );
 
     useEffect(() => {
-        //   data.result.map(data)
+        if(error) {
+            console.error(error);
+        }
         if (data && data.result) {
             setSearchHistory(data.result)
         }
@@ -55,7 +59,7 @@ const QueryHistory: FC<Prop> = ({ setSearchKey, handleSearch }) => {
         <>
             {
                 loading ? (<p style={{ textAlign: "center" }}>loading</p>) : (
-                    <SearchHistory searchHistory={searchHistory} setSearchKey={setSearchKey} handleSearch={handleSearch} />
+                    <SearchHistory searchHistory={searchHistory} setSearchKey={setSearchKey} handleSearch={handleSearch} handleLocation={handleLocation} />
                 )
             }
         </>
