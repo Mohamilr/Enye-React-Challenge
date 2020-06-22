@@ -21,9 +21,12 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             alignItems: 'center',
             width: 450,
-            // marginTop: '3em',
+            margin: '0 1em',
             [theme.breakpoints.down('md')]: {
-                width: 450,
+                margin: '0 auto',
+            textAlign: 'center',
+            width: '30em'
+                // width: 450,
                 // marginRight: '4em'
             }
         },

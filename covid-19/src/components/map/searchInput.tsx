@@ -12,10 +12,13 @@ interface Prop {
     propObject: {
         setSearchKey: (value: string) => void,
         searchKey: string,
+        location: string,
         handleSubmit: (e: any) => void,
-        handleLocation: () => Promise<void>,
-        handleSearch: () => Promise<void>,
-        setLocation: (value: string) => void
+        handleLocation: (location: string) => Promise<void>,
+        handleSearch: (searchKey: string, radius: number) => Promise<void>,
+        setLocation: (value: string) => void,
+        setRadius: (value: number) => void,
+        radius: number
     }
 }
 
@@ -23,6 +26,7 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
     const classes = useStyles();
     const [validateKey, setValidateKey] = useState<boolean>(false);
     const [validateLocation, setValidateLocation] = useState<boolean>(false);
+    const [validateRadius, setValidateRadius] = useState<boolean>(false);
     const [validateError, setValidateError] = useState<boolean>(false);
 
     // hospital or pharmacy onchange action
@@ -41,11 +45,19 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
         propObject.setLocation(e.target.value);
     }
 
+    // Location onchange action
+    const handleRadius = (e: any) => {
+        if (e.target.value !== 0) {
+            setValidateRadius(true)
+        }
+        propObject.setRadius(e.target.value);
+    }
+
     const handleSearchAction = (e: any) => {
         e.preventDefault();
-        if (validateKey && validateLocation) {
-            propObject.handleLocation();
-            propObject.handleSearch();
+        if (validateKey && validateLocation && validateRadius) {
+            propObject.handleLocation(propObject.location);
+            propObject.handleSearch(propObject.searchKey, propObject.radius);
             propObject.handleSubmit(e);
             setValidateError(false);
         }
@@ -55,11 +67,11 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
     }
 
     return (
-        <div className={classes.parentDiv}>
+        <div >
             <Paper component="form" className={classes.root}>
                 <InputBase
                     className={classes.input}
-                    placeholder="Hospital, Pharmacy"
+                    placeholder="Hospital, Pharmacy ..."
                     value={propObject.searchKey}
                     required
                     onChange={e => handleSearchKeyAction(e)}
@@ -69,8 +81,17 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
                 <InputBase
                     className={classes.input}
                     placeholder="Location"
-                    required
                     onChange={e => handleLocationAction(e)}
+                    inputProps={{ 'aria-label': 'search google maps' }}
+                />
+                <Divider orientation="vertical" flexItem />
+                <InputBase
+                style={{width: '4em'}}
+                    // className={classes.input}
+                    placeholder="0"
+                    required
+                    type="number"
+                    onChange={e => handleRadius(e)}
                     inputProps={{ 'aria-label': 'search google maps' }}
                 />
                 <Tooltip title="Search">

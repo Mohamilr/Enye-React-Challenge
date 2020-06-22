@@ -1,5 +1,5 @@
-import React, { useState, FC, useContext } from 'react';
-import { Map, TileLayer, Marker } from 'react-leaflet';
+import React, { useState, FC, useContext, useEffect } from 'react';
+import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { firestore } from '../../config/firebase.config';
 import { AuthProvider } from '../../utils/useContext';
@@ -21,9 +21,31 @@ const AutorizedMap: FC = () => {
     const [lat, setLat] = useState<number>(6.5243793);
     const [lng, setLng] = useState<number>(3.3792057);
     const [searchKey, setSearchKey] = useState<string>('');
+    const [radius, setRadius] = useState<number>(3);
+    const [names, setNames] = useState<any[]>([]);
     const [results, setResults] = useState<any[]>([]);
     const { userId } = useContext(AuthProvider);
 
+    useEffect(() => {
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+
+        const success = (pos: any) => {
+            const { coords } = pos;
+            setLat(coords.latitude)
+            setLng(coords.longitude)
+        }
+
+        const error = (err: any) => {
+            console.error(`ERROR(${err.code}): ${err.message}`);
+        }
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
+
+    }, [])
     // s an entry in the database
     const handleSubmit = (e: any) => {
         e.preventDefault()
@@ -31,12 +53,13 @@ const AutorizedMap: FC = () => {
         db.collection('searchHistory').add({
             searchString: searchKey,
             userId: userId,
-            location: location
+            location: location,
+            radius: radius
         });
     }
 
     // get data for 
-    const handleLocation = async () => {
+    const handleLocation = async (location: string) => {
         try {
             const response = await fetch(`https://google-maps-geocoding.p.rapidapi.com/geocode/json?language=en&address=${location}`, {
                 method: 'GET',
@@ -60,25 +83,12 @@ const AutorizedMap: FC = () => {
     }
 
     // trigger the hospital or pharmacy search
-    const handleSearch = async () => {
+    const handleSearch = async (searchKey: string, radius: number) => {
         try {
-            // capitalize first string
-            const searchKeyCap = searchKey.charAt(0).toUpperCase() + searchKey.slice(1);
-
-            let code: number = 0
-
-                switch (searchKeyCap) {
-                    case 'Hospital':
-                        code = 7321
-                        break;
-                    case 'Pharmacy':
-                        code = 7326
-                        break;
-                    default:
-                        break;
-                }
-   
-            const response = await fetch(`https://api.tomtom.com/search/2/poiSearch/${searchKeyCap}.json?lat=${lat}&lon=${lng}&extendedPostalCodesFor=PAD&categorySet=${code}&key=ciIsGdG3irXcWG9ukyhZfMvZ0aZUbnkU`, {
+            // convert radius value to meters
+            const radiusInMeters = radius * 1000; 
+            
+            const response = await fetch(`https://api.tomtom.com/search/2/geometrySearch/${searchKey}.json?geometryList=%5B%7B%22type%22%3A%22POLYGON%22%2C%20%22vertices%22%3A%5B%22${lat}%2C%20${lng}%22%2C%20%22${lat}%2C%20${lng}%22%2C%20%22${lat}%2C%20${lng}%22%2C%20%22${lat}%2C%20${lng}%22%5D%7D%2C%20%7B%22type%22%3A%22CIRCLE%22%2C%20%22position%22%3A%22${lat}%2C%20${lng}%22%2C%20%22radius%22%3A${radiusInMeters}%7D%5D&idxSet=POI&key=ciIsGdG3irXcWG9ukyhZfMvZ0aZUbnkU`, {
                 method: 'GET',
             })
             const data = await response.json();
@@ -86,12 +96,21 @@ const AutorizedMap: FC = () => {
             if (!data.results) {
                 return console.log('not found')
             }
+            console.log(data)
             // array to store latitude and longitude
             const latAndLng: any = []
             data.results.map((latlng: any) => {
                 latAndLng.push(latlng.position)
             })
             setResults(latAndLng)
+
+            // name foe popup
+            const placeNames: any = []
+            data.results.map((name: any) => {
+                placeNames.push({name: name.poi.name})
+            })
+
+            setNames(placeNames)
         }
         catch (e) {
             console.error(e)
@@ -106,14 +125,17 @@ const AutorizedMap: FC = () => {
         handleSubmit,
         handleLocation,
         handleSearch,
-        setLocation
+        setLocation,
+        location,
+        setRadius,
+        radius
     }
 
     return (
         <div className={classes.container}>
             <div className={classes.right}>
                 <SearchInput propObject={searchInputPropObject} />
-                <History setSearchKey={setSearchKey} handleSearch={handleSearch} />
+                <History setSearchKey={setSearchKey} handleSearch={handleSearch} handleLocation={handleLocation} />
             </div>
             <div >
                 <Map center={[lat, lng]} className={classes.mapLayout} zoom={13}>
@@ -122,7 +144,12 @@ const AutorizedMap: FC = () => {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {results.map((data: any, index) => (
-                        <Marker key={index} marker_index={index} position={[data.lat, data.lon]} icon={icon} />
+                        <Marker key={index} marker_index={index} position={[data.lat, data.lon]} icon={icon} >
+                            {/* {names.map((name: any, index) => (
+                            <Popup key={index}>{name.name}</Popup>
+                            )
+                            )} */}
+                        </Marker>
                     )
                     )}
                 </Map>

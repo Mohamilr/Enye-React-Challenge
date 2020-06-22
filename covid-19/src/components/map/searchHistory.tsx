@@ -5,38 +5,39 @@ import ListItemText from '@material-ui/core/ListItemText';
 import useStyle from '../../styles/mapStyle';
 
 interface Prop {
-    searchHistory: string[],
-    setSearchKey: (value: string) => void,
-    handleSearch: () => Promise<void>
+  searchHistory: string[],
+  setSearchKey: (value: string) => void,
+  handleSearch: (searchKey: string, radius:number) => Promise<void>,
+  handleLocation: (location: string) => Promise<void>,
 }
 
 
-const SearchHistory: FC<Prop> = ({ searchHistory, setSearchKey, handleSearch }) => {
-    const classes = useStyle();
+const SearchHistory: FC<Prop> = ({ searchHistory, setSearchKey, handleSearch, handleLocation }) => {
+  const classes = useStyle();
 
-  
-const handlePreviousSearch = (e: any) => {
-  setSearchKey(e.target.textContent);
-          
-  handleSearch();
-}
 
-    return (
-        <div className={classes.parentDiv}>
-          <h3>Search History</h3>
-            <List className={classes.historyDiv} component="nav" aria-label="Search History">
-              {searchHistory.map((data: any, index) => (
-                <ListItem key={index} button divider>
-        <ListItemText onClick={(e: any) => handlePreviousSearch(e)}>
-            {data.searchString}
+  const handlePreviousSearch = (location: string, searchString: string, radius:number) => {
+    // setSearchKey(e.target.textContent);
+    handleLocation(location)
+    handleSearch(searchString, radius);
+  }
 
-            {/* {`${data.searchString} in ${data.location}`} */}
+  return (
+    <div className={classes.parentDiv}>
+      <h3>Search History</h3>
+      <List className={classes.historyDiv} component="nav" aria-label="Search History">
+        {searchHistory.map((data: any, index) => (
+          <ListItem key={index} button divider>
+            <ListItemText onClick={(e: any) => handlePreviousSearch(data.location, data.searchString, data.radius)}>
+              {/* {`${data.searchString} */}
+
+              {`${data.searchString} in ${data.location} by ${data.radius} km`}
             </ListItemText>
-      </ListItem>
-              ))}
-    </List>
-        </div>
-    );
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
 }
 
 export default SearchHistory;
