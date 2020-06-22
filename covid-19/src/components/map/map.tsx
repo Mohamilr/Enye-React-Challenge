@@ -1,12 +1,11 @@
-import React, { useState, useEffect, FC, useContext } from 'react';
+import React, { useState, FC, useContext } from 'react';
 import { Map, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
-import { nanoid } from 'nanoid';
-import { firestore } from '../config/firebase.config';
-import SearchHistory from './searchHistory';
-import { AuthProvider } from '../utils/useContext';
-import useStyles from '../styles/mapStyle';
+import { firestore } from '../../config/firebase.config';
+import { AuthProvider } from '../../utils/useContext';
+import useStyles from '../../styles/mapStyle';
 import SearchInput from './searchInput';
+import History from '../graphql/apolloQuery';
 
 // place indicator icon
 const icon = L.icon({
@@ -22,19 +21,8 @@ const AutorizedMap: FC = () => {
     const [lat, setLat] = useState<number>(6.5243793);
     const [lng, setLng] = useState<number>(3.3792057);
     const [searchKey, setSearchKey] = useState<string>('');
-    const [searchHistory, setSearchHistory] = useState<string[]>([]);
-    const [searchKeyresults, setSearchKeyResults] = useState<any[]>([]);
     const [results, setResults] = useState<any[]>([]);
     const { userId } = useContext(AuthProvider);
-
-    useEffect(() => {
-        // the search key eg hospital
-        handlePlace();
-        HandleGetSearchHistory();
-        if (!userId) {
-            localStorage.setItem('userId', nanoid(10));
-        }
-    }, [results])
 
     // s an entry in the database
     const handleSubmit = (e: any) => {
@@ -45,66 +33,6 @@ const AutorizedMap: FC = () => {
             userId: userId,
             location: location
         });
-    }
-
-    // gets data that belongs to the user
-    const HandleGetSearchHistory = async () => {
-        try {
-            const db = firestore;
-            await db.collection('searchHistory').get().then(snapshot => {
-                const strings: any = [];
-                snapshot.docs.map(data => {
-                    if (data.data().userId === userId) {
-                        const values: any = data.data()
-                        strings.push({
-                            searchString: values.searchString,
-                            location: values.location
-                        })
-                    }
-                    // console.log(data.data())
-                })
-                setSearchHistory(strings)
-            })
-                .catch(e => console.error(e))
-        }
-        catch (e) {
-            console.error(e);
-        }
-    }
-
-    // fetch the location to get Latitude and longitude
-    const handlePlace = async () => {
-        try {
-            const response = await fetch(`https://api.tomtom.com/search/2/poiCategories.json?key=ciIsGdG3irXcWG9ukyhZfMvZ0aZUbnkU`, {
-                method: 'GET'
-            });
-
-            const data = await response.json()
-            if (data.length < 1) {
-                return console.log('not found')
-            }
-            const keys: any[] = [];
-            data.poiCategories.map((category: any) => {
-                if (category.name === 'Hospital' && category.id === 7321) {
-                    keys.push({
-                        id: category.id,
-                        name: category.name
-                    })
-                }
-
-                if (category.name === 'Pharmacy' && category.id === 7326) {
-                    keys.push({
-                        id: category.id,
-                        name: category.name
-                    })
-                }
-            })
-
-            setSearchKeyResults(keys)
-        }
-        catch (e) {
-            console.error(e);
-        }
     }
 
     // get data for 
@@ -122,7 +50,7 @@ const AutorizedMap: FC = () => {
             if (data.length < 1) {
                 return console.log('not found')
             }
-           
+
             setLat(data.results[0].geometry.location.lat);
             setLng(data.results[0].geometry.location.lng);
         }
@@ -137,19 +65,19 @@ const AutorizedMap: FC = () => {
             // capitalize first string
             const searchKeyCap = searchKey.charAt(0).toUpperCase() + searchKey.slice(1);
 
-            // string code. api search by string code eg pharmacy = 7326
             let code: number = 0
-            searchKeyresults.map((key: any) => {
-                if (key.name === searchKeyCap) {
-                    code = key.id
-                    console.log(key.name)
+
+                switch (searchKeyCap) {
+                    case 'Hospital':
+                        code = 7321
+                        break;
+                    case 'Pharmacy':
+                        code = 7326
+                        break;
+                    default:
+                        break;
                 }
-                // else if (searchKeyCap === 'Clinic' || searchKeyCap === 'Medical office') {
-                //     code = key.id
-                //     // console.log(key[0].id)
-                // }
-                // console.log(key.name)
-            })
+   
             const response = await fetch(`https://api.tomtom.com/search/2/poiSearch/${searchKeyCap}.json?lat=${lat}&lon=${lng}&extendedPostalCodesFor=PAD&categorySet=${code}&key=ciIsGdG3irXcWG9ukyhZfMvZ0aZUbnkU`, {
                 method: 'GET',
             })
@@ -185,7 +113,7 @@ const AutorizedMap: FC = () => {
         <div className={classes.container}>
             <div className={classes.right}>
                 <SearchInput propObject={searchInputPropObject} />
-                <SearchHistory searchHistory={searchHistory} setSearchKey={setSearchKey} handleSearch={handleSearch} />
+                <History setSearchKey={setSearchKey} handleSearch={handleSearch} />
             </div>
             <div >
                 <Map center={[lat, lng]} className={classes.mapLayout} zoom={13}>

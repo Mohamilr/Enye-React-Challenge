@@ -1,4 +1,4 @@
-import React, { createContext , useState, useEffect, FC } from 'react';
+import React, { createContext , useState, useEffect } from 'react';
 import { auth } from '../config/firebase.config';
 
 //  App context pros

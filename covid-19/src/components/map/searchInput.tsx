@@ -5,7 +5,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
-import useStyles from '../styles/mapStyle';
+import useStyles from '../../styles/mapStyle';
 
 //  Search input props
 interface Prop {
