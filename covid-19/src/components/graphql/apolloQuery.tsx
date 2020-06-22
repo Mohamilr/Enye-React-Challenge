@@ -41,17 +41,18 @@ const QueryHistory: FC<Prop> = ({ setSearchKey, handleSearch, handleLocation }) 
     const [searchHistory, setSearchHistory] = useState<any[]>([]);
     const { userId } = useContext(AuthProvider);
 
-    const { loading, data } = useQuery(
+    const { loading, error, data } = useQuery(
         historyQuery,
         { variables: { userID: userId } }
     );
 
     useEffect(() => {
-        //   data.result.map(data)
+        if(error) {
+            console.error(error);
+        }
         if (data && data.result) {
             setSearchHistory(data.result)
         }
-
     }, [data])
 
     return (

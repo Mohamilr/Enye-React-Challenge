@@ -72,8 +72,6 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
                 <InputBase
                     className={classes.input}
                     placeholder="Hospital, Pharmacy ..."
-                    value={propObject.searchKey}
-                    required
                     onChange={e => handleSearchKeyAction(e)}
                     inputProps={{ 'aria-label': 'search google maps' }}
                 />
