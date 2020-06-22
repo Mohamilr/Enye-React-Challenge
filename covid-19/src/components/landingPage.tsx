@@ -5,6 +5,8 @@ import { signInWithGoogle } from '../config/firebase.config';
 import { AuthProvider } from '../utils/useContext';
 import Svg from '../asset/svg';
 import useStyles from '../styles/mapStyle';
+import QueryH from './apolloQuery';
+
 
 const LandingPage = () => {
     const classes = useStyles();
@@ -25,6 +27,7 @@ const LandingPage = () => {
                     <Button onClick={(e: any) => signInWithGoogle()} variant="outlined" color="secondary">
                         Sign in with google
                     </Button>
+                    <QueryH />
                 </div>
                 <div>
                     <Svg />

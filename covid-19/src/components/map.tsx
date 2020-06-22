@@ -61,6 +61,7 @@ const AutorizedMap: FC = () => {
                             location: values.location
                         })
                     }
+                    // console.log(data.data())
                 })
                 setSearchHistory(strings)
             })

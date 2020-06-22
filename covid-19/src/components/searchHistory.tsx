@@ -11,19 +11,24 @@ interface Prop {
     handleSearch: () => Promise<void>
 }
 
+
 const SearchHistory: FC<Prop> = ({ searchHistory, setSearchKey, handleSearch }) => {
     const classes = useStyle();
+
+  
+const handlePreviousSearch = (e: any) => {
+  setSearchKey(e.target.textContent);
+          
+  handleSearch();
+}
+
     return (
         <div className={classes.parentDiv}>
           <h3>Search History</h3>
             <List className={classes.historyDiv} component="nav" aria-label="Search History">
               {searchHistory.map((data: any, index) => (
                 <ListItem key={index} button divider>
-        <ListItemText onClick={(e: any) => { 
-          setSearchKey(e.target.textContent);
-          
-          handleSearch();
-          }}>
+        <ListItemText onClick={(e: any) => handlePreviousSearch(e)}>
             {data.searchString}
 
             {/* {`${data.searchString} in ${data.location}`} */}
