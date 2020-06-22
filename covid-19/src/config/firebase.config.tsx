@@ -3,13 +3,13 @@ import "firebase/auth";
 import "firebase/firestore";
 
 const config = {
-    apiKey: "AIzaSyD2jS1AYTo8aDbue075XTeIjvNb57s7KaI",
-    authDomain: "covid-19-dd561.firebaseapp.com",
-    databaseURL: "https://covid-19-dd561.firebaseio.com",
-    projectId: "covid-19-dd561",
-    storageBucket: "covid-19-dd561.appspot.com",
-    messagingSenderId: "71610863878",
-    appId: "1:71610863878:web:c7df1b8cb1d9384b150e87"
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_DATABASE_URL,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID
 };
 
 firebase.initializeApp(config);

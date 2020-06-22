@@ -1,6 +1,6 @@
 # Enye-React-Challenge
 
-![app image](https://res.cloudinary.com/project-s/image/upload/v1592819304/map_c3pgn1.png)
+![app image](https://res.cloudinary.com/project-s/image/upload/v1592862762/map_lif4or.png)
 
 ## Run App
 * ```cd covid-19```  
