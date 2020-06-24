@@ -100,7 +100,7 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
             </Paper>
             {/* validation prompt */}
             <div>
-                {validateError ? <p style={{ color: 'red' }}>Enter search key and location</p> : ''}
+                {validateError ? <p style={{ color: 'red', textAlign: 'center' }}>Enter search key, location and kilometer</p> : ''}
             </div>
         </div>
     );

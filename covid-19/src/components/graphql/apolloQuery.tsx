@@ -53,7 +53,7 @@ const QueryHistory: FC<Prop> = ({ setSearchKey, handleSearch, handleLocation }) 
         if (data && data.result) {
             setSearchHistory(data.result)
         }
-    }, [data])
+    }, [data, error])
 
     return (
         <>
