@@ -65,7 +65,7 @@ const AutorizedMap: FC = () => {
                 method: 'GET',
                 headers: {
                     "x-rapidapi-host": "google-maps-geocoding.p.rapidapi.com",
-                    "x-rapidapi-key": "2b140728d4msh9fed995ffd67651p16455cjsnd6c6d9e20a66"
+                    "x-rapidapi-key": "feb5a7b223msh76b7a43e38446bfp1eb31ajsne300800cf916"
                 }
             });
 
@@ -96,11 +96,15 @@ const AutorizedMap: FC = () => {
             if (!data.results) {
                 return console.log('not found')
             }
-            console.log(data)
+
             // array to store latitude and longitude
             const latAndLng: any = []
             data.results.map((latlng: any) => {
-                latAndLng.push(latlng.position)
+                latAndLng.push({
+                    lat: latlng.position.lat,
+                    lng: latlng.position.lon,
+                    name: latlng.poi.name
+                })
             })
             setResults(latAndLng)
 
@@ -144,11 +148,8 @@ const AutorizedMap: FC = () => {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {results.map((data: any, index) => (
-                        <Marker key={index} marker_index={index} position={[data.lat, data.lon]} icon={icon} >
-                            {/* {names.map((name: any, index) => (
-                            <Popup key={index}>{name.name}</Popup>
-                            )
-                            )} */}
+                        <Marker key={index} marker_index={index} position={[data.lat, data.lng]} icon={icon} >
+                            <Popup>{data.name}</Popup>
                         </Marker>
                     )
                     )}
