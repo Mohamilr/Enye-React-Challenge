@@ -22,7 +22,6 @@ const AutorizedMap: FC = () => {
     const [lng, setLng] = useState<number>(3.3792057);
     const [searchKey, setSearchKey] = useState<string>('');
     const [radius, setRadius] = useState<number>(3);
-    const [names, setNames] = useState<any[]>([]);
     const [results, setResults] = useState<any[]>([]);
     const { userId } = useContext(AuthProvider);
 
@@ -100,21 +99,13 @@ const AutorizedMap: FC = () => {
             // array to store latitude and longitude
             const latAndLng: any = []
             data.results.map((latlng: any) => {
-                latAndLng.push({
+               return latAndLng.push({
                     lat: latlng.position.lat,
                     lng: latlng.position.lon,
                     name: latlng.poi.name
                 })
             })
             setResults(latAndLng)
-
-            // name foe popup
-            const placeNames: any = []
-            data.results.map((name: any) => {
-                placeNames.push({name: name.poi.name})
-            })
-
-            setNames(placeNames)
         }
         catch (e) {
             console.error(e)
