@@ -102,7 +102,8 @@ const AutorizedMap: FC = () => {
                return latAndLng.push({
                     lat: latlng.position.lat,
                     lng: latlng.position.lon,
-                    name: latlng.poi.name
+                    name: latlng.poi.name,
+                    address: latlng.address.freeformAddress,
                 })
             })
             setResults(latAndLng)
@@ -140,7 +141,7 @@ const AutorizedMap: FC = () => {
                     />
                     {results.map((data: any, index) => (
                         <Marker key={index} marker_index={index} position={[data.lat, data.lng]} icon={icon} >
-                            <Popup>{data.name}</Popup>
+                            <Popup>{`${data.name}, ${data.address}`}</Popup>
                         </Marker>
                     )
                     )}
