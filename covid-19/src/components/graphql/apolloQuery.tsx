@@ -43,7 +43,7 @@ const QueryHistory: FC<Prop> = ({ setSearchKey, handleSearch, handleLocation }) 
 
     const { loading, error, data } = useQuery(
         historyQuery,
-        { variables: { userID: userId } }
+        { variables: { userID: userId }, pollInterval: 600 }
     );
 
     useEffect(() => {

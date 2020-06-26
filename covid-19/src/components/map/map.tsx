@@ -1,8 +1,6 @@
 import React, { useState, FC, useContext, useEffect } from 'react';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { firestore } from '../../config/firebase.config';
-import { AuthProvider } from '../../utils/useContext';
 import useStyles from '../../styles/mapStyle';
 import SearchInput from './searchInput';
 import History from '../graphql/apolloQuery';
@@ -23,8 +21,7 @@ const AutorizedMap: FC = () => {
     const [searchKey, setSearchKey] = useState<string>('');
     const [radius, setRadius] = useState<number>(3);
     const [results, setResults] = useState<any[]>([]);
-    const { userId } = useContext(AuthProvider);
-
+    //
     useEffect(() => {
         const options = {
             enableHighAccuracy: true,
@@ -45,19 +42,9 @@ const AutorizedMap: FC = () => {
         navigator.geolocation.getCurrentPosition(success, error, options);
 
     }, [])
-    // s an entry in the database
-    const handleSubmit = (e: any) => {
-        e.preventDefault()
-        const db = firestore;
-        db.collection('searchHistory').add({
-            searchString: searchKey,
-            userId: userId,
-            location: location,
-            radius: radius
-        });
-    }
+    
 
-    // get data for 
+    // get data for location
     const handleLocation = async (location: string) => {
         try {
             const response = await fetch(`https://google-maps-geocoding.p.rapidapi.com/geocode/json?language=en&address=${location}`, {
@@ -72,6 +59,9 @@ const AutorizedMap: FC = () => {
             if (data.length < 1) {
                 return console.log('not found')
             }
+
+            console.log(`${location}`,data.results[0].geometry.location.lat);
+            console.log(`${location}`, data.results[0].geometry.location.lng);
 
             setLat(data.results[0].geometry.location.lat);
             setLng(data.results[0].geometry.location.lng);
@@ -118,13 +108,13 @@ const AutorizedMap: FC = () => {
     const searchInputPropObject = {
         setSearchKey,
         searchKey,
-        handleSubmit,
+        // handleSubmit,
         handleLocation,
         handleSearch,
         setLocation,
         location,
         setRadius,
-        radius
+        radius,
     }
 
     return (
@@ -134,18 +124,20 @@ const AutorizedMap: FC = () => {
                 <History setSearchKey={setSearchKey} handleSearch={handleSearch} handleLocation={handleLocation} />
             </div>
             <div >
+              
                 <Map center={[lat, lng]} className={classes.mapLayout} zoom={13}>
-                    <TileLayer
-                        attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    {results.map((data: any, index) => (
-                        <Marker key={index} marker_index={index} position={[data.lat, data.lng]} icon={icon} >
-                            <Popup>{`${data.name}, ${data.address}`}</Popup>
-                        </Marker>
-                    )
-                    )}
-                </Map>
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {results.map((data: any, index) => (
+                    <Marker key={index} marker_index={index} position={[data.lat, data.lng]} icon={icon} >
+                        <Popup>{`${data.name}, ${data.address}`}</Popup>
+                    </Marker>
+                )
+                )}
+            </Map> 
+                
             </div>
         </div>
     );

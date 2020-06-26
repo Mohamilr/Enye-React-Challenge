@@ -29,8 +29,6 @@ const SearchHistory: FC<Prop> = ({ searchHistory, setSearchKey, handleSearch, ha
         {searchHistory.map((data: any, index) => (
           <ListItem key={index} button divider>
             <ListItemText onClick={(e: any) => handlePreviousSearch(data.location, data.searchString, data.radius)}>
-              {/* {`${data.searchString} */}
-
               {`${data.searchString} in ${data.location} by ${data.radius} km`}
             </ListItemText>
           </ListItem>

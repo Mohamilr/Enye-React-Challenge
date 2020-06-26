@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render landing page 1`] = `
+<DocumentFragment>
+  <div
+    class="makeStyles-parentDiv-8"
+  >
+    <h1>
+      Page not found
+    </h1>
+    <a
+      href="/"
+    >
+      Go back home
+    </a>
+  </div>
+</DocumentFragment>
+`;

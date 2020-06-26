@@ -1,6 +1,6 @@
 import React from 'react';
 import { ApolloProvider } from 'react-apollo';
-import Routes from './utils/route';
+import Routes from './routes/route';
 import MyErrorBoundary from './components/errorBoundary';
 import { AppContext } from './utils/useContext';
 import client from './config/apolloClient';
