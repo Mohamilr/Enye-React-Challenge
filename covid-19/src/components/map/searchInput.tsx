@@ -7,8 +7,9 @@ import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
 import useStyles from '../../styles/mapStyle';
 
+
 //  Search input props
-interface Prop {
+export interface Prop {
     propObject: {
         setSearchKey: (value: string) => void,
         searchKey: string,
@@ -18,7 +19,7 @@ interface Prop {
         handleSearch: (searchKey: string, radius: number) => Promise<void>,
         setLocation: (value: string) => void,
         setRadius: (value: number) => void,
-        radius: number
+        radius: number,
     }
 }
 
@@ -28,6 +29,7 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
     const [validateLocation, setValidateLocation] = useState<boolean>(false);
     const [validateRadius, setValidateRadius] = useState<boolean>(false);
     const [validateError, setValidateError] = useState<boolean>(false);
+
 
     // hospital or pharmacy onchange action
     const handleSearchKeyAction = (e: any) => {
@@ -56,7 +58,7 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
     const handleSearchAction = (e: any) => {
         e.preventDefault();
         if (validateKey && validateLocation && validateRadius) {
-            propObject.handleLocation(propObject.location);
+            // propObject.handleLocation(propObject.location)
             propObject.handleSearch(propObject.searchKey, propObject.radius);
             propObject.handleSubmit(e);
             setValidateError(false);
@@ -80,11 +82,12 @@ const SearchInput: FC<Prop> = ({ propObject }) => {
                     className={classes.input}
                     placeholder="Location"
                     onChange={e => handleLocationAction(e)}
+                    onBlur={e => propObject.handleLocation(e.target.value)}
                     inputProps={{ 'aria-label': 'search google maps' }}
                 />
                 <Divider orientation="vertical" flexItem />
                 <InputBase
-                style={{width: '4em'}}
+                    style={{ width: '4em' }}
                     // className={classes.input}
                     placeholder="0"
                     required

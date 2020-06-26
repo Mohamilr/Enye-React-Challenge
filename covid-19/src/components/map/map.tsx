@@ -24,7 +24,7 @@ const AutorizedMap: FC = () => {
     const [radius, setRadius] = useState<number>(3);
     const [results, setResults] = useState<any[]>([]);
     const { userId } = useContext(AuthProvider);
-
+    //
     useEffect(() => {
         const options = {
             enableHighAccuracy: true,
@@ -124,7 +124,7 @@ const AutorizedMap: FC = () => {
         setLocation,
         location,
         setRadius,
-        radius
+        radius,
     }
 
     return (
@@ -134,18 +134,20 @@ const AutorizedMap: FC = () => {
                 <History setSearchKey={setSearchKey} handleSearch={handleSearch} handleLocation={handleLocation} />
             </div>
             <div >
+              
                 <Map center={[lat, lng]} className={classes.mapLayout} zoom={13}>
-                    <TileLayer
-                        attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    {results.map((data: any, index) => (
-                        <Marker key={index} marker_index={index} position={[data.lat, data.lng]} icon={icon} >
-                            <Popup>{`${data.name}, ${data.address}`}</Popup>
-                        </Marker>
-                    )
-                    )}
-                </Map>
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {results.map((data: any, index) => (
+                    <Marker key={index} marker_index={index} position={[data.lat, data.lng]} icon={icon} >
+                        <Popup>{`${data.name}, ${data.address}`}</Popup>
+                    </Marker>
+                )
+                )}
+            </Map> 
+                
             </div>
         </div>
     );

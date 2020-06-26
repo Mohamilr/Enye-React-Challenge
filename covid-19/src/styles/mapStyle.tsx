@@ -61,7 +61,8 @@ const useStyles = makeStyles((theme: Theme) =>
                 width: '100%'
             },
             [theme.breakpoints.down('sm')]: {
-                width: '40em'
+                width: '40em',
+                margin: '0 1em 1em 1em'
             },
         },
         virusText: {
